@@ -163,6 +163,26 @@
   .confetti { position: fixed; top: -12px; width: 9px; height: 14px; animation: fall linear forwards; pointer-events: none; }
   @keyframes fall { to { transform: translateY(105vh) rotate(720deg); } }
 
+
+  /* Message card shown after the candle goes out */
+  .letter {
+    position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center;
+    padding: 20px; background: rgba(20, 8, 40, .72);
+    opacity: 0; visibility: hidden; transition: opacity .8s ease, visibility 0s .8s;
+  }
+  .letter.show { opacity: 1; visibility: visible; transition: opacity .8s ease; }
+  .card {
+    max-width: 440px; max-height: 88vh; overflow-y: auto; padding: 28px 24px 22px;
+    background: #fff7f3; color: #4a2c5a; border-radius: 20px; text-align: left;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+    transform: translateY(24px) scale(.96); transition: transform .8s cubic-bezier(.2, 1.2, .4, 1);
+  }
+  .letter.show .card { transform: none; }
+  .card h2 { font-size: 1.5rem; text-align: center; margin-bottom: 14px; color: var(--berry); }
+  .card p { line-height: 1.6; font-size: 1.02rem; margin-bottom: 12px; }
+  .card .again-btn { display: block; margin: 16px auto 0; }
+  .confetti { z-index: 20; }
+
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: .01s !important; animation-iteration-count: 1 !important; }
   }
@@ -197,6 +217,15 @@
 
 <div id="meter"><div id="bar"></div></div>
 <button id="again">Light it again</button>
+
+<div class="letter" id="letter" aria-live="polite">
+  <div class="card">
+    <h2>Happy birthday! 🎂</h2>
+    <p>Alam kong medyo stressed ka lately, kaya sana kahit today, makapagpahinga ka muna at ma-enjoy mo yung araw mo. Huwag mo masyadong i-pressure sarili mo. One step at a time lang.</p>
+    <p>Sana maging okay na lahat soon, and sana maging masaya at peaceful yung bagong chapter ng life mo. Deserve mo yan. Enjoy your day!</p>
+    <button class="again-btn" id="again2" style="display:inline-block">Light the candle again</button>
+  </div>
+</div>
 
 <script>
   // ✏️ Change these to personalize the greeting
@@ -335,13 +364,14 @@
     candle.classList.add("out");
     hint.textContent = "Hooray! Hope your wish comes true 🎉";
     confetti();
-    again.style.display = "inline-block";
+    setTimeout(() => $("letter").classList.add("show"), 1800);
   }
 
   function reset() {
     candle.classList.remove("on", "out");
     candle.style.removeProperty("--lean"); candle.style.removeProperty("--s");
     candle.onclick = null;
+    $("letter").classList.remove("show");
     state = "waiting"; loudFrames = 0; baseline = 0;
     again.style.display = "none";
     hint.textContent = "Tap the cake to add a candle";
@@ -364,6 +394,7 @@
   $("stage").addEventListener("click", addCandle);
   $("stage").addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") addCandle(); });
   again.addEventListener("click", reset);
+  $("again2").addEventListener("click", reset);
 </script>
 </body>
 </html>
